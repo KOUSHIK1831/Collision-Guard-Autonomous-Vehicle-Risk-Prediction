@@ -43,9 +43,7 @@ Road type
 
 Time and location data
 
-Data acquisition began in 2020 and expanded with multi-sensor telemetry (camera, radar, lidar) and diverse driving conditions 
-
-.
+Data acquisition began in 2020 and expanded with multi-sensor telemetry (camera, radar, lidar) and diverse driving conditions.
 
 2. Exploratory Data Analysis (EDA)
 
@@ -91,9 +89,7 @@ Road conditions
 
 Time of day
 
-Feature engineering evolved from manual selection to advanced machine-learning-driven feature extraction 
-
-.
+Feature engineering evolved from manual selection to advanced machine-learning-driven feature extraction.
 
 5. Model Used
 
@@ -119,9 +115,7 @@ Recall
 
 F1-Score
 
-This ensured the model performs reliably on unseen driving data and avoids bias toward the majority class 
-
-.
+This ensured the model performs reliably on unseen driving data and avoids bias toward the majority class.
 
 🔍 Key Collision Risk Drivers
 
@@ -137,9 +131,7 @@ Road geometry
 
 Traffic density
 
-Machine learning models were used to quantify feature importance and improve real-time risk estimation 
-
-.
+Machine learning models were used to quantify feature importance and improve real-time risk estimation.
 
 🚀 Deployment Vision
 
@@ -151,9 +143,7 @@ Traffic management platforms
 
 Real-time risk dashboards
 
-The goal is to provide live collision risk alerts and enable preventive actions before accidents occur 
-
-.
+The goal is to provide live collision risk alerts and enable preventive actions before accidents occur.
 
 🧪 Technologies Used
 
