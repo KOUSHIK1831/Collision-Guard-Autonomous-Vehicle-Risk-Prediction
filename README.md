@@ -246,7 +246,7 @@ If you use this work in your research, please cite:
 
 ```bibtex
 @misc{collision-guard,
-  author = {Agraz, G. and Suradhya Reddy, K. and Koushik Reddy, B. and Charan Teja, M.},
+  author = {Koushik},
   title = {Collision Guard: Real-Time Collision Risk Prediction for Autonomous Vehicles},
   year = {2024},
   note = {Available as part of the project repository}
