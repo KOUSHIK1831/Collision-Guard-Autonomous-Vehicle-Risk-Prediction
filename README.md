@@ -1,258 +1,90 @@
-# 🚗 Collision Guard — Real-Time Collision Risk Prediction for Autonomous Vehicles
+<div align="center">
 
-An end-to-end machine learning pipeline that predicts collision risk using synthetic driving telemetry, with multi-model comparison, hyperparameter tuning, and real-time risk simulation.
+# Collision Guard
 
-![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.0%2B-green)
-![Status](https://img.shields.io/badge/status-academic%20research-lightgrey)
+**Explore collision-risk classification with synthetic vehicle telemetry and reproducible Jupyter experiments.**
 
----
+![Python](https://img.shields.io/badge/Python-Jupyter-3776AB?logo=python&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/ML-scikit--learn-F7931E?logo=scikitlearn&logoColor=white)
 
-## Table of Contents
+[Get started](#quick-start) · [Workflow](#modeling-workflow) · [Results](#experimental-results) · [Limitations](#limitations)
 
-- [Overview](#overview)
-- [Features](#features)
-- [Dataset](#dataset)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Models & Results](#models--results)
-- [Technical Details](#technical-details)
-- [Potential Improvements](#potential-improvements)
-- [License](#license)
-- [Citation](#citation)
+</div>
 
----
-
-## Overview
-
-This project builds and evaluates machine learning models to predict collision risk in autonomous vehicles using synthetic telemetry data. It addresses the challenge of severe class imbalance (4.8% collision rate) by applying SMOTE oversampling and comparing four classifiers to identify the best approach for safety-critical detection.
-
-The pipeline covers:
-
-- **Data Profiling** — Automated statistical summaries, class distribution analysis, missing value check
-- **Preprocessing** — Stratified train/test split, SMOTE balancing, StandardScaler normalization
-- **Feature Engineering** — Domain-specific interaction features (speed-distance ratio, brake-accel ratio, etc.)
-- **Multi-Model Comparison** — Random Forest, Gradient Boosting, Logistic Regression, SVM evaluated on 5 metrics
-- **Hyperparameter Tuning** — GridSearchCV on the best-performing model
-- **Risk Simulation** — Real-time prediction on random sample points with probability scoring
-
----
+Collision Guard is an academic machine-learning notebook that compares classifiers for predicting whether simulated driving conditions indicate a collision risk. The experiment uses **500 synthetic telemetry records**, including only **24 positive-risk cases**, to study how severe class imbalance affects model evaluation.
 
 ## Features
 
-- **Class Imbalance Handling** — SMOTE oversampling applied only to training data to prevent data leakage
-- **No Data Leakage** — SMOTE, scaling, and feature engineering all fit on training data only
-- **Multi-Metric Evaluation** — Accuracy, precision, recall, F1-score, and ROC AUC for all models
-- **Safety-Critical Focus** — Recall prioritized as the key metric; missing a collision is costlier than a false alarm
-- **Hyperparameter Tuning** — GridSearchCV with 5-fold cross-validation on the best model
-- **Real-Time Simulation** — Random sampling of data points with risk probability prediction and visualization
+- Explore vehicle speed, steering, acceleration, braking, proximity, relative speed, weather, and road type.
+- Engineer interaction features such as speed-to-distance and braking-to-acceleration ratios.
+- Split training and test data before applying **SMOTE** to training samples.
+- Compare Random Forest, Gradient Boosting, Logistic Regression, and SVM.
+- Evaluate accuracy, precision, recall, F1, and ROC AUC; tune models with `GridSearchCV`.
+- Simulate predictions for sampled telemetry records and visualize risk scores.
 
----
+> [!WARNING]
+> This is a **research demonstration**, not a real-time automotive safety system. Its small synthetic dataset and limited collision examples do not establish reliability for autonomous driving or real vehicles.
 
-## Dataset
+## Quick start
 
-Synthetic dataset with 500 observations of driving telemetry.
+Requires Python and Jupyter Notebook or JupyterLab.
 
-| Column | Type | Description |
-|---|---|---|
-| `time` | float | Timestamp (0–100) |
-| `speed` | float | Vehicle speed |
-| `steer_angle` | float | Steering angle |
-| `accel` | float | Acceleration |
-| `distance_to_obj` | float | Distance to nearest object |
-| `rel_speed` | float | Relative speed to object |
-| `brake` | float | Braking intensity |
-| `weather` | int | Weather severity (0, 1, 2) |
-| `road_type` | int | Road type category (0, 1, 2) |
-| `risk` | int | **Target** — 0: no risk, 1: collision risk |
-
-**Class distribution:** 476 no-risk (95.2%) — 24 collision-risk (4.8%)
-
-Engineered features (created during preprocessing):
-
-| Feature | Formula |
-|---|---|
-| `speed_distance_ratio` | speed / (distance_to_obj + 1e-5) |
-| `brake_accel_ratio` | brake / (abs(accel) + 1e-5) |
-| `rel_speed_distance` | rel_speed × distance_to_obj |
-| `speed_steer_interaction` | speed × abs(steer_angle) |
-
----
-
-## Project Structure
-
-```
-.
-├── Collision_Risk_Prediction.ipynb   # Main notebook (11 code cells)
-├── collision_risk_dataset.csv        # Synthetic dataset (500 rows, 10 columns)
-└── README.md                         # Project documentation
-```
-
----
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8+
-- Jupyter Notebook or JupyterLab
-
-### Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/Collision-Guard-Autonomous-Vehicle-Risk-Prediction.git
+~~~bash
+git clone https://github.com/KOUSHIK1831/Collision-Guard-Autonomous-Vehicle-Risk-Prediction.git
 cd Collision-Guard-Autonomous-Vehicle-Risk-Prediction
-
-# Create and activate virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate    # Linux/macOS
-# venv\Scripts\activate     # Windows
-
-# Install dependencies
-pip install --upgrade pip
-pip install pandas numpy matplotlib seaborn scikit-learn imbalanced-learn jupyter
-
-# Launch the notebook
+python -m pip install pandas numpy matplotlib seaborn scikit-learn imbalanced-learn joblib notebook
 jupyter notebook Collision_Risk_Prediction.ipynb
+~~~
+
+Run the notebook from top to bottom; keep `collision_risk_dataset.csv` beside it.
+
+## Modeling workflow
+
+```text
+Synthetic telemetry CSV
+         |
+         v
+Exploration + feature engineering
+         |
+         v
+Stratified train/test split
+         |
+         v
+Train-only scaling and SMOTE
+         |
+         v
+Four classifier comparison
+         |
+         v
+Tuning + sampled risk simulation
 ```
 
----
+**Target:** `risk` (`0` = no reported risk, `1` = collision risk). The dataset has 476 negative and 24 positive records, so accuracy alone can give a misleading impression of quality.
 
-## Usage
+## Experimental results
 
-1. **Open the notebook** — Launch `Collision_Risk_Prediction.ipynb`
-2. **Run cells sequentially** — The notebook is organized into 11 code cells:
-    - Cell 1: Library imports and plot styling
-    - Cell 2: Data loading and initial profiling (info, describe, class distribution)
-    - Cell 3: Exploratory data analysis (class distribution plot, correlation heatmap, feature distributions, risk time series)
-    - Cell 4: Train/test split, SMOTE balancing, StandardScaler normalization
-    - Cell 5: Feature engineering (4 interaction features)
-    - Cell 6: Model training and comparison (4 models, 5 metrics)
-    - Cell 7: Best model evaluation (confusion matrix, classification report, ROC curve)
-    - Cell 8: Feature importance / coefficient analysis
-    - Cell 9: Hyperparameter tuning with GridSearchCV
-    - Cell 10: Real-time risk simulation and visualization
-    - Cell 11: Model saving (joblib) and reusable `predict_collision_risk()` function
+The project's existing notebook documentation reports:
 
----
+| Model | Accuracy | Positive-class recall | F1 |
+| --- | ---: | ---: | ---: |
+| Random Forest | 0.9533 | 0.0000 | 0.0000 |
+| Gradient Boosting | 0.9533 | 0.0000 | 0.0000 |
+| Logistic Regression | 0.1733 | 0.8571 | 0.0882 |
+| SVM | 0.9533 | 0.0000 | 0.0000 |
 
-## Models & Results
+Logistic Regression detects more positive-risk cases in this split, but at the cost of very low accuracy and precision. The other classifiers miss the positive cases. **No tested model should be considered deployment-ready.** Re-run the notebook for environment-specific results.
 
-Four classifiers were trained on the balanced dataset and evaluated on the original test set.
+## Project structure
 
-### Model Comparison
+| File | Description |
+| --- | --- |
+| [Collision_Risk_Prediction.ipynb](Collision_Risk_Prediction.ipynb) | Feature engineering, training, comparison, tuning, simulation |
+| [collision_risk_dataset.csv](collision_risk_dataset.csv) | Synthetic telemetry used in the experiment |
+| `README.md` | Setup and experiment overview |
 
-| Model | Accuracy | Precision | Recall | F1 | ROC AUC |
-|---|---|---|---|---|---|
-| Random Forest | 0.9533 | 0.0000 | 0.0000 | 0.0000 | 0.4486 |
-| Gradient Boosting | 0.9533 | 0.0000 | 0.0000 | 0.0000 | 0.5000 |
-| **Logistic Regression** | 0.1733 | 0.0465 | **0.8571** | **0.0882** | 0.5415 |
-| SVM | 0.9533 | 0.0000 | 0.0000 | 0.0000 | 0.6743 |
+## Limitations
 
-**Best model (by F1): Logistic Regression**
+Evaluation is constrained by the synthetic data, class imbalance, and very small positive test set. A practical safety system would require representative real-world data, stronger validation, calibration, uncertainty handling, and independent safety testing.
 
-Random Forest, Gradient Boosting, and SVM default to predicting all zeros due to the severe class imbalance in the test set, yielding zero recall. Logistic Regression trades overall accuracy for the ability to detect collision events.
-
-### Classification Report — Logistic Regression
-
-| Class | Precision | Recall | F1 | Support |
-|---|---|---|---|---|
-| 0 (No risk) | 0.95 | 0.14 | 0.24 | 143 |
-| 1 (Collision) | 0.05 | **0.86** | 0.09 | 7 |
-
-### Hyperparameter Tuning
-
-- **Best parameters:** `C=100`, `penalty=l1`, `solver=liblinear`
-- **Tuned ROC AUC:** 0.5544
-- **Tuned macro F1:** 0.34
-
-### Feature Coefficients (Logistic Regression)
-
-| Feature | Coefficient |
-|---|---|
-| `rel_speed_distance` | **+2.413** |
-| `speed` | +0.062 |
-| `brake_accel_ratio` | −0.097 |
-| `speed_steer_interaction` | −0.156 |
-| `weather` | −0.228 |
-| `speed_distance_ratio` | −0.841 |
-| `road_type` | −1.081 |
-| `distance_to_obj` | −2.247 |
-| `brake` | −3.162 |
-| `rel_speed` | −3.250 |
-
-The interaction feature `rel_speed_distance` is the strongest positive predictor. `rel_speed` and `brake` show the strongest negative association with collision risk.
-
----
-
-## Technical Details
-
-### Pipeline Architecture
-
-```
-┌──────────────┐    ┌──────────────────┐    ┌───────────────────┐
-│ Raw Data     │───▶│ Preprocessing    │───▶│ Feature           │
-│ (500 rows    │    │ - stratified     │    │ Engineering       │
-│  10 columns) │    │   split (70/30)  │    │ - speed_dist_ratio│
-│              │    │ - SMOTE (333/333)│    │ - brake_accel_ratio│
-│              │    │ - StandardScaler │    │ - rel_speed_dist  │
-└──────────────┘    └──────────────────┘    │ - speed_steer_int │
-                                            └────────┬──────────┘
-                                                     ▼
-┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│ Simulation       │◀───│ Hyperparameter   │◀───│ Model Comparison │
-│ - Random sample  │    │ Tuning           │    │ - RF             │
-│ - Risk prob plot │    │ - GridSearchCV   │    │ - GBM            │
-│                   │    │ - 5-fold CV      │    │ - LR (best F1)   │
-│                   │    │ - scoring: F1    │    │ - SVM            │
-└──────────────────┘    └──────────────────┘    └──────────────────┘
-```
-
-### Key Design Decisions
-
-- **Post-split SMOTE** — SMOTE is applied after `train_test_split` to prevent synthetic samples from leaking into the test set
-- **F1-based model selection** — The best model is chosen by F1-score rather than accuracy to account for class imbalance
-- **Isolated feature scaling** — `StandardScaler` is fit on training data and transformed on test data to prevent leakage
-- **Safety-oriented metric** — Recall is highlighted as the primary metric for the final model since missing a collision has higher stakes than a false alarm
-- **Deterministic splits** — `random_state=42` ensures reproducible train/test splits and SMOTE synthesis
-
----
-
-## Potential Improvements
-
-- Hyperparameter tuning for all models (not just the best one)
-- Advanced models (XGBoost, LightGBM, neural networks)
-- Temporal cross-validation to respect the time-series structure
-- Cost-sensitive learning to penalize false negatives more heavily
-- Synthetic data augmentation beyond SMOTE (GANs, variational autoencoders)
-- SHAP / LIME explanations for model interpretability
-- Web deployment (Streamlit / FastAPI) for real-time risk scoring
-- Continuous drift monitoring for production readiness
-
----
-
-## License
-
-This project is provided for academic and educational purposes.
-
----
-
-## Citation
-
-If you use this work in your research, please cite:
-
-```bibtex
-@misc{collision-guard,
-  author = {Koushik},
-  title = {Collision Guard: Real-Time Collision Risk Prediction for Autonomous Vehicles},
-  year = {2024},
-  note = {Available as part of the project repository}
-}
-```
-
----
-
-*Built with Python, scikit-learn, imbalanced-learn, and Jupyter.*
+> [!TIP]
+> Compare **recall and precision together** when reviewing collision-risk predictions. A model that flags every scenario as risky can have high recall without being useful.
