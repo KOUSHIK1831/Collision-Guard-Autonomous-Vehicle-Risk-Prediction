@@ -82,6 +82,47 @@ Logistic Regression detects more positive-risk cases in this split, but at the c
 | [collision_risk_dataset.csv](collision_risk_dataset.csv) | Synthetic telemetry used in the experiment |
 | `README.md` | Setup and experiment overview |
 
+## Interpreting the metrics
+
+A model that always predicts the majority class would achieve high
+accuracy on this dataset while failing to identify collisions.
+For a detection task, **positive-class recall** measures how many
+risk events are caught, while **precision** measures how often a
+risk alert is actually correct.
+
+The reported Logistic Regression experiment has comparatively high
+recall (0.8571) but very low precision (approximately 0.0465).
+This illustrates a costly false-alert tradeoff; it is not evidence
+that the model is suitable for operational collision warnings.
+ROC AUC and F1 should be considered alongside the confusion matrix
+and the small positive-class sample count.
+
+## Reproducing the experiment
+
+The notebook performs exploration, feature construction, data
+splitting, training-sample balancing, model comparison, tuning, and
+simulated predictions. To re-run:
+
+1. Keep [`collision_risk_dataset.csv`](collision_risk_dataset.csv)
+   in the same directory as the notebook.
+2. Install the dependencies shown in [Quick start](#quick-start).
+3. Restart the notebook kernel and run all cells in order.
+4. Inspect per-class precision/recall, not just overall accuracy.
+5. Compare the new results with the reported example metrics.
+
+The code uses `joblib` for a model/scaler serialization workflow.
+Treat any generated model artifact as an experimental output, not a
+production-grade autonomous-driving control component.
+
+## Next research steps
+
+- Evaluate on larger, independently collected datasets.
+- Use repeated stratified evaluation to quantify uncertainty.
+- Investigate calibrated probabilities and alert thresholds.
+- Separate feature construction, preprocessing, and resampling into
+  leak-resistant pipelines for all model comparisons.
+- Validate performance on conditions not represented in training.
+
 ## Limitations
 
 Evaluation is constrained by the synthetic data, class imbalance, and very small positive test set. A practical safety system would require representative real-world data, stronger validation, calibration, uncertainty handling, and independent safety testing.
